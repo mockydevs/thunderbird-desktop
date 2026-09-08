@@ -60,9 +60,7 @@ window.addEventListener("message", event => {
   }
   if (event.data.meteors == "start-meteors") {
     if (!this.progressMeterVisible) {
-      document
-        .getElementById("statusbar-progresspanel")
-        .removeAttribute("collapsed");
+      document.getElementById("statusbar-progresspanel").hidden = false;
       this.progressMeterVisible = true;
     }
     document.getElementById("statusbar-icon").removeAttribute("value");
@@ -72,7 +70,7 @@ window.addEventListener("message", event => {
       gRunningFilters = false;
 
       if (this.progressMeterVisible) {
-        document.getElementById("statusbar-progresspanel").collapsed = true;
+        document.getElementById("statusbar-progresspanel").hidden = true;
         this.progressMeterVisible = false;
       }
     } catch (ex) {
