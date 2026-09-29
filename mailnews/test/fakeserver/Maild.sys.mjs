@@ -199,6 +199,7 @@ export class nsMailServer {
         Ci.nsITLSClientStatus.TLS_VERSION_1_3
       );
       socket.serverCert = this.tlsCert;
+      socket.setSessionTickets(false);
     } else {
       socket = new ServerSocket(this._port, true, -1);
     }
