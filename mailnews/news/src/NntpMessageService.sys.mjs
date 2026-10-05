@@ -221,7 +221,7 @@ class BaseMessageService {
    * @returns {string} The news:// url.
    */
   _createMessageIdUrl(messageURI) {
-    if (messageURI.startsWith("news://")) {
+    if (messageURI.startsWith("news://") || messageURI.startsWith("snews://")) {
       return messageURI;
     }
     const [folder, key] = this._decomposeNewsMessageURI(messageURI);

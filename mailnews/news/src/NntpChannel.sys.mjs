@@ -39,6 +39,9 @@ export class NntpChannel extends MailChannel {
       this._server = MailServices.accounts
         .createIncomingServer("", uri.asciiHost, "nntp")
         .QueryInterface(Ci.nsINntpIncomingServer);
+      if (uri.scheme == "snews") {
+        this._server.socketType = Ci.nsMsgSocketType.SSL;
+      }
       this._server.port = uri.port;
     }
 
