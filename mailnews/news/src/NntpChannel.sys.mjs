@@ -165,6 +165,16 @@ export class NntpChannel extends MailChannel {
 
   asyncOpen(listener) {
     this._logger.debug("asyncOpen", this.URI.spec);
+    if (
+      [this._messageId, this._groupName, this._articleNumber].some(value =>
+        /[\r\n\0]/.test(value ?? "")
+      )
+    ) {
+      throw Components.Exception(
+        `Invalid news URI: ${this.URI.spec}`,
+        Cr.NS_ERROR_MALFORMED_URI
+      );
+    }
     const url = new URL(this.URI.spec);
     this._listener = listener;
     if (url.searchParams.has("list-ids")) {
