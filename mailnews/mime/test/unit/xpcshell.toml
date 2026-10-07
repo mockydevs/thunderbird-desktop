@@ -59,6 +59,9 @@ tags = [
 ["test_smime_decrypt_allow_sha1.js"]
 run-sequentially = true  # Because it set's a pref that must not be active for other tests.
 
+["test_smime_decrypt_password_prompt.js"]
+tags = ["smime"]
+
 ["test_smime_perm_decrypt.js"]
 
 ["test_smime_signed_nested_in_pgp.js"]
