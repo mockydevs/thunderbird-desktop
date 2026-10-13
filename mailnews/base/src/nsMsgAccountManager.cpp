@@ -36,7 +36,6 @@
 #include "nsIObserverService.h"
 #include "nsINoIncomingServer.h"
 #include "nsIMsgMailSession.h"
-#include "nsIScriptError.h"
 #include "nsIDirectoryService.h"
 #include "nsAppDirectoryServiceDefs.h"
 #include "nsMailDirServiceDefs.h"
@@ -523,28 +522,13 @@ nsMsgAccountManager::RemoveIncomingServer(nsIMsgIncomingServer* aServer,
 
   nsCOMPtr<nsIMsgFolder> rootFolder;
   rv = aServer->GetRootFolder(getter_AddRefs(rootFolder));
-  if (NS_FAILED(rv)) {
-    MsgLogToConsole4(NS_ConvertUTF8toUTF16(nsPrintfCString(
-                         "failed to get root folder for server %s: %s",
-                         serverKey.get(), mozilla::GetStaticErrorName(rv))),
-                     nsDependentCString(__FILE__), __LINE__,
-                     nsIScriptError::warningFlag);
-  }
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsTArray<RefPtr<nsIMsgFolder>> allDescendants;
-  if (rootFolder) {
-    rv = rootFolder->GetDescendants(allDescendants);
-    if (NS_FAILED(rv)) {
-      MsgLogToConsole4(NS_ConvertUTF8toUTF16(nsPrintfCString(
-                           "failed to get descendants for server %s: %s",
-                           serverKey.get(), mozilla::GetStaticErrorName(rv))),
-                       nsDependentCString(__FILE__), __LINE__,
-                       nsIScriptError::warningFlag);
-      allDescendants.Clear();
-    }
-  }
+  rv = rootFolder->GetDescendants(allDescendants);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  if (rootFolder && !mozilla::StaticPrefs::mail_panorama_enabled_AtStartup()) {
+  if (!mozilla::StaticPrefs::mail_panorama_enabled_AtStartup()) {
     // Remove every folder on the account from the folder cache.
     for (const auto& folder : allDescendants) {
       nsresult cacherv = RemoveFolderFromCache(folder);
@@ -573,17 +557,8 @@ nsMsgAccountManager::RemoveIncomingServer(nsIMsgIncomingServer* aServer,
     // Update the on-disk copy of the cache, so we don't end up with unneeded
     // folders if e.g. Thunderbird crashes or gets SIGKILL'd later on.
     nsCOMPtr<nsIMsgFolderCache> folderCache;
-    cacherv = GetFolderCache(getter_AddRefs(folderCache));
-    if (NS_SUCCEEDED(cacherv)) {
-      cacherv = folderCache->Flush();
-    }
-    if (NS_FAILED(cacherv)) {
-      MsgLogToConsole4(NS_ConvertUTF8toUTF16(nsPrintfCString(
-                           "failed to flush folder cache: %s",
-                           mozilla::GetStaticErrorName(cacherv))),
-                       nsDependentCString(__FILE__), __LINE__,
-                       nsIScriptError::warningFlag);
-    }
+    MOZ_TRY(GetFolderCache(getter_AddRefs(folderCache)));
+    MOZ_TRY(folderCache->Flush());
   }
   // Invalidate the `FindServer()` cache entry for this server. We need to do
   // this after the folders have been removed from the folder cache, because the
@@ -615,21 +590,13 @@ nsMsgAccountManager::RemoveIncomingServer(nsIMsgIncomingServer* aServer,
     folder->GetParent(getter_AddRefs(parentFolder));
     mailSession->OnFolderRemoved(parentFolder, folder);
   }
-  if (rootFolder) {
-    notifier->NotifyFolderDeleted(rootFolder);
-    mailSession->OnFolderRemoved(nullptr, rootFolder);
-  }
+  notifier->NotifyFolderDeleted(rootFolder);
+  mailSession->OnFolderRemoved(nullptr, rootFolder);
 
   NotifyServerUnloaded(aServer);
   if (aRemoveFiles) {
-    nsresult filerv = aServer->RemoveFiles();
-    if (NS_FAILED(filerv)) {
-      MsgLogToConsole4(
-          NS_ConvertUTF8toUTF16(nsPrintfCString(
-              "failed to remove files for server %s: %s", serverKey.get(),
-              mozilla::GetStaticErrorName(filerv))),
-          nsDependentCString(__FILE__), __LINE__, nsIScriptError::warningFlag);
-    }
+    rv = aServer->RemoveFiles();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   nsCOMPtr<nsIObserverService> obs = mozilla::services::GetObserverService();
@@ -641,10 +608,8 @@ nsMsgAccountManager::RemoveIncomingServer(nsIMsgIncomingServer* aServer,
   // now clear out the server once and for all.
   // watch out! could be scary
   aServer->ClearAllValues();
-  if (rootFolder) {
-    rootFolder->Shutdown(true);
-  }
-  return NS_OK;
+  rootFolder->Shutdown(true);
+  return rv;
 }
 
 nsresult nsMsgAccountManager::RemoveFolderFromCache(nsIMsgFolder* aFolder) {
