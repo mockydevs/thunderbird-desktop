@@ -11260,7 +11260,8 @@ function InitEditor() {
         const msgSvc = MailServices.messageServiceFromURI(gOriginalMsgURI);
         const originalMsgNeckoURI = msgSvc.getUrlForUri(gOriginalMsgURI);
         if (
-          src.startsWith(
+          lazy.ComposeUtils.isURLOfMessage(
+            src,
             removeQueryPart(
               originalMsgNeckoURI.spec,
               "type=application/x-message-display"
@@ -11269,7 +11270,8 @@ function InitEditor() {
           // Special hack for saved messages.
           (src.includes("?number=0&") &&
             originalMsgNeckoURI.spec.startsWith("file://") &&
-            src.startsWith(
+            lazy.ComposeUtils.isURLOfMessage(
+              src,
               removeQueryPart(
                 originalMsgNeckoURI.spec,
                 "type=application/x-message-display"
@@ -11324,7 +11326,8 @@ function InitEditor() {
     const msgSvc = MailServices.messageServiceFromURI(gOriginalMsgURI);
     const originalMsgNeckoURI = msgSvc.getUrlForUri(gOriginalMsgURI);
     if (
-      background.startsWith(
+      lazy.ComposeUtils.isURLOfMessage(
+        background,
         removeQueryPart(
           originalMsgNeckoURI.spec,
           "type=application/x-message-display"
