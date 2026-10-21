@@ -1,8 +1,8 @@
 ---
 GECKO_BASE_REPOSITORY: https://hg.mozilla.org/mozilla-unified
 GECKO_HEAD_REPOSITORY: https://hg.mozilla.org/releases/mozilla-beta
-GECKO_HEAD_REF: FIREFOX_159_0b4_RELEASE
-GECKO_HEAD_REV: 6b01f55b37938d2c57530fadb14664b20abc61c9
+GECKO_HEAD_REF: FIREFOX_RELEASE_159_BASE
+GECKO_HEAD_REV: 7a806ef0f9e3a96c5609497ccbcad86696b98e83
 
 ### For comm-central
 # GECKO_BASE_REPOSITORY: https://hg.mozilla.org/mozilla-unified
