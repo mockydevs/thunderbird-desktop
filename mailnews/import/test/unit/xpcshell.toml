@@ -9,11 +9,6 @@ tags = ["import"]
 ["test_AddrBookFileImporter.js"]
 tags = ["vcard"]
 
-["test_AppleMailImport.js"]
-run-if = [
-  "os == 'mac'",
-]
-
 ["test_SeamonkeyProfileImporter.js"]
 
 ["test_ThunderbirdProfileImporter.js"]

@@ -14,7 +14,6 @@
 #include "nsAppleMailImport.h"
 #include "prprf.h"
 #include "nsIFile.h"
-#include "mozilla/CheckedInt.h"
 
 #import <Cocoa/Cocoa.h>
 
@@ -77,8 +76,7 @@ nsresult nsEmlxHelperUtils::AddEmlxMessageToStream(nsIFile* aMessage,
     return NS_ERROR_FAILURE;
   }
 
-  const char* startOfData = static_cast<const char*>([data bytes]);
-  const char* endOfData = startOfData + [data length];
+  char* startOfMessageData = NULL;
   uint32_t actualBytesWritten = 0;
 
   // The anatomy of an EMLX file:
@@ -91,41 +89,27 @@ nsresult nsEmlxHelperUtils::AddEmlxMessageToStream(nsIFile* aMessage,
 
   // read the first line of the emlx file, which is a number of how many bytes
   // ahead the actual message data is.
-  const char* startOfMessageData = startOfData;
-  mozilla::CheckedUint32 numberOfBytesToRead = 0;
-  while (startOfMessageData < endOfData && *startOfMessageData >= '0' &&
-         *startOfMessageData <= '9') {
-    uint32_t digit = *startOfMessageData - '0';
-    numberOfBytesToRead = numberOfBytesToRead * 10 + digit;
-    ++startOfMessageData;
-  }
-  if (startOfMessageData == startOfData || !numberOfBytesToRead.isValid() ||
-      numberOfBytesToRead.value() == 0) {
+  uint64_t numberOfBytesToRead =
+      strtol((char*)[data bytes], &startOfMessageData, 10);
+  if (numberOfBytesToRead <= 0 || !startOfMessageData) {
     [pool release];
     return NS_ERROR_FAILURE;
   }
 
   // skip whitespace
-  while (startOfMessageData < endOfData &&
-         (*startOfMessageData == ' ' || *startOfMessageData == '\n' ||
-          *startOfMessageData == '\r' || *startOfMessageData == '\t'))
+  while (*startOfMessageData == ' ' || *startOfMessageData == '\n' ||
+         *startOfMessageData == '\r' || *startOfMessageData == '\t')
     ++startOfMessageData;
-
-  if (numberOfBytesToRead.value() >
-      static_cast<size_t>(endOfData - startOfMessageData)) {
-    [pool release];
-    return NS_ERROR_FAILURE;
-  }
 
   constexpr auto kEndOfMessage = "\n\n"_ns;
 
   // now read the XML metadata, so we can extract info like which flags (read?
   // replied? flagged? etc) this message has.
-  const char* startOfXMLMetadata =
-      startOfMessageData + numberOfBytesToRead.value();
+  const char* startOfXMLMetadata = startOfMessageData + numberOfBytesToRead;
+  const char* endOfXMLMetadata = (char*)[data bytes] + [data length];
 
   uint32_t x_mozilla_flags = 0;
-  ConvertToMozillaStatusFlags(startOfXMLMetadata, endOfData,
+  ConvertToMozillaStatusFlags(startOfXMLMetadata, endOfXMLMetadata,
                               &x_mozilla_flags);
 
   // write the X-Mozilla-Status header according to which flags we've gathered
@@ -168,14 +152,14 @@ nsresult nsEmlxHelperUtils::AddEmlxMessageToStream(nsIFile* aMessage,
   }
 
   // write the actual message data.
-  rv = aOut->Write(startOfMessageData, numberOfBytesToRead.value(),
+  rv = aOut->Write(startOfMessageData, (uint32_t)numberOfBytesToRead,
                    &actualBytesWritten);
   if (NS_FAILED(rv)) {
     [pool release];
     return rv;
   }
 
-  NS_ASSERTION(actualBytesWritten == numberOfBytesToRead.value(),
+  NS_ASSERTION(actualBytesWritten == numberOfBytesToRead,
                "Didn't write as many bytes as expected for .emlx file?");
 
   // add newlines to denote the end of this message in the mbox
