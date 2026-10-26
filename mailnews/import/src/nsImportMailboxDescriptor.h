@@ -68,8 +68,7 @@ class nsImportMailboxDescriptor : public nsIImportMailboxDescriptor {
 
   /* readonly attribute nsIFile file; */
   NS_IMETHOD GetFile(nsIFile** aFile) override {
-    NS_ADDREF(*aFile = m_pFile);
-    return NS_OK;
+    return NS_ERROR_NOT_IMPLEMENTED;
   }
 
   nsImportMailboxDescriptor();
@@ -81,7 +80,6 @@ class nsImportMailboxDescriptor : public nsIImportMailboxDescriptor {
   uint32_t m_id;           // used by creator of the structure
   uint32_t m_depth;        // depth in the hierarchy
   nsString m_displayName;  // name of this mailbox
-  nsCOMPtr<nsIFile> m_pFile;  // source file (if applicable)
   uint32_t m_size;
   bool m_import;  // import it or not?
 };
