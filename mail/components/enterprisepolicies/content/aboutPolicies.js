@@ -276,7 +276,6 @@ function generateDocumentation() {
   const string_mapping = {
     BackgroundAppUpdate: "BackgroundAppUpdate2",
     Certificates: "CertificatesDescription",
-    DisablePasswordReveal: "DisablePasswordReveal2",
     SecurityDevices: "SecurityDevices2",
   };
 
