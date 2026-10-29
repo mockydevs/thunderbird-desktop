@@ -242,6 +242,13 @@ return true;
                     wait_for(lambda: js(f"const root={view}.shadowRoot;return [...root.querySelectorAll('article[aria-expanded=\"false\"]')].every(a=>a.dataset.obInitials)&&root.querySelectorAll('article[aria-expanded=\"false\"]').length===3;"))
                 check(True, 'Initials and controls survive repeated reloads without disappearing or duplicating')
                 check(js("return !Services.console.getMessageArray().some(e=>e instanceof Ci.nsIScriptError&&e.sourceName?.includes('outlook-bird')&&e.errorMessage?.includes('dead object'));"), 'Message-document cleanup produces no dead-document errors')
+                from table_layout import run as table_checks
+                table_checks(js, wait_for, check)
+                if args.table_screenshot:
+                    image = client.call('WebDriver:TakeScreenshot', {'full':False})
+                    encoded = image['value'] if isinstance(image, dict) else image
+                    args.table_screenshot.parent.mkdir(parents=True, exist_ok=True)
+                    args.table_screenshot.write_bytes(base64.b64decode(encoded))
                 from compose import run as compose_checks
                 fixture = Path(temporary)/'draft-notes.txt'
                 fixture.write_text('Local draft attachment fixture.')
@@ -301,4 +308,5 @@ if __name__ == '__main__':
     parser.add_argument('--thunderbird', default='thunderbird')
     parser.add_argument('--workdir', type=Path, default=Path.cwd()/'work')
     parser.add_argument('--screenshot', type=Path)
+    parser.add_argument('--table-screenshot', type=Path)
     run(parser.parse_args())

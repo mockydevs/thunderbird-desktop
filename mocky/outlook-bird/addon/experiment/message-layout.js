@@ -4,6 +4,36 @@
 
 var OB_READING_STYLE = "__OUTLOOK_BIRD_MESSAGE_BODY_CSS__";
 
+/** Decorates simple PR/author/description tables without changing email content. */
+function decorateReviewTables(content) {
+  const tables = [];
+  for (const table of content.querySelectorAll("table")) {
+    const rows = [...table.rows];
+    const headers = [...(rows[0]?.cells || [])].map((cell) =>
+      cell.textContent.trim().toLowerCase(),
+    );
+    if (
+      headers.length !== 3 ||
+      headers[0] !== "pr" ||
+      headers[1] !== "author" ||
+      !["what", "description"].includes(headers[2]) ||
+      rows.some(
+        (row) =>
+          row.cells.length !== 3 ||
+          [...row.cells].some(
+            (cell) => cell.colSpan !== 1 || cell.rowSpan !== 1,
+          ),
+      )
+    )
+      continue;
+    table.classList.add("ob-pr-table");
+    tables.push(table);
+  }
+  return () => {
+    for (const table of tables) table.classList.remove("ob-pr-table");
+  };
+}
+
 /** Sizes a native message browser and places its attachment controls above the body. */
 class MessageLayout {
   constructor(
@@ -267,6 +297,7 @@ class MessageLayout {
       style.dataset.obReadingStyle = "true";
       style.textContent = OB_READING_STYLE;
       content.head.append(style);
+      const restoreTables = decorateReviewTables(content);
       const dimensions = new content.defaultView.ResizeObserver(() =>
         this.queueSize(),
       );
@@ -274,6 +305,7 @@ class MessageLayout {
       this.contentCleanup = () => {
         cleanupUI(() => dimensions.disconnect());
         cleanupUI(() => style.remove());
+        cleanupUI(restoreTables);
       };
     }
     for (const button of doc.querySelectorAll(".ob-message-actions button")) {

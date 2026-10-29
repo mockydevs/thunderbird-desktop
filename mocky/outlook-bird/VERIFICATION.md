@@ -45,3 +45,10 @@ Upstream `mach commlint`, mochitests, leak instrumentation and full Thunderbird 
 Firefox compilation were not run: this standalone package was tested using the
 installed application without a parent Firefox build checkout. GitHub Actions
 runs package/installer checks; it does not claim real Thunderbird UI coverage.
+
+## 0.3.1 table layout
+
+The full local UI suite passed with four additional assertions covering full PR
+identifiers and author names on one line, multiline descriptions, reading-pane
+containment and unchanged unrelated tables. The layout is restricted to simple
+three-column PR/Author/What (or Description) tables with no merged cells.

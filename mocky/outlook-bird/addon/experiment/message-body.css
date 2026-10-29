@@ -21,6 +21,44 @@ body :is(pre, code, kbd, samp) {
   font-family: monospace !important;
   font-size: 13px !important;
 }
-body { overflow-wrap: anywhere !important; }
-body img { max-inline-size: 100%; block-size: auto; }
-body pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+body {
+  overflow-wrap: anywhere !important;
+}
+body img {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+body pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Keep identifiers readable and let descriptions determine the row height. */
+.ob-pr-table {
+  inline-size: 100% !important;
+  table-layout: auto !important;
+  border-collapse: collapse !important;
+}
+.ob-pr-table :is(th, td) {
+  padding-block: 9px !important;
+  padding-inline: 10px !important;
+  text-align: start !important;
+  vertical-align: top !important;
+  border-block-end: 1px solid #e4e9ed !important;
+}
+.ob-pr-table :is(th, td):nth-child(1) {
+  inline-size: 7ch !important;
+}
+.ob-pr-table :is(th, td):nth-child(2) {
+  inline-size: 20ch !important;
+}
+.ob-pr-table :is(th, td):nth-child(-n + 2),
+.ob-pr-table :is(th, td):nth-child(-n + 2) * {
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+.ob-pr-table :is(th, td):nth-child(3) {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}

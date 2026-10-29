@@ -1,5 +1,13 @@
 # Changes
 
+## 0.3.1
+
+- Keep PR numbers and author names unbroken in PR/Author/What tables.
+- Give descriptions the remaining width and natural multiline row heights.
+- Preserve other email tables and restore the original classes on disable.
+- Add real-reader regression coverage for long identifiers, long authors,
+  multiline descriptions and reading-pane containment.
+
 ## 0.3.0
 
 - Shared message formatting across single readers and conversations.
