@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 /outlook-bird.xpi
 /work/
+
+/dist/

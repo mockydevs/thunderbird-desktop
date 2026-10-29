@@ -1,37 +1,47 @@
-# Verification — 2026-10-29
+# Verification
 
-Tested with the installed Thunderbird 159.0 on Linux. The customization uses the
-native message browser and attachment handlers; a full source-built application
-has not been produced.
+Version 0.3.0 was exercised on Linux with the official Thunderbird 159.0 binary.
+The package is an extension and profile theme, not a rebuilt Thunderbird binary.
 
-Passed checks:
+## Automated checks
 
-- Clean-profile installation and correctly styled horizontal toolbar.
-- Four-message conversation with global search indexing disabled.
-- Full message content, 14px reading text and consistent body insets.
-- Content-sized cards with no nested text scrollbar or unused bottom region.
-- Attachment cards above the body, file-menu targeting and dropdown spacing.
-- Keyboard expansion with retained focus and two simultaneously expanded cards.
-- Opaque sticky subject header and stable space for the outer scrollbar.
-- All/Unread filtering and separate, small message-list action icons.
-- Image loading from a loopback HTTP server without a permission prompt.
-- Promotional notifications and the start page disabled.
-- Repeated extension reloads without missing initials, duplicate controls or
-  destroyed-document exceptions.
-- Install/restore preserves unrelated preferences and a pre-existing stylesheet.
-- JavaScript syntax, Python compilation and JSON/package validation.
+- 13 Python installer/build tests: reproducible XPI builds, translation/schema
+  agreement, privacy-policy preservation, repeated updates, independent profile
+  backups, original-state restore, XPI/style rollback, partial-copy failure
+  recovery, failed-build protection, checksum coverage, running-process guard
+  and unsupported-version rejection.
+- Real Thunderbird UI checks in a temporary Local Folders profile: toolbar,
+  read filters, opaque conversation header, shared scrollbar, body spacing and
+  14px reading text, top attachment cards and native attachment menus.
+- HTML and plain-text single readers, navigation without duplicate attachment
+  controls, and separate message windows.
+- Stalled body load, accessible error/retry, native message reload and genuinely
+  empty MIME bodies (excluding Thunderbird's generated header tables).
+- A 120-message thread with only one initial message browser and independent
+  keyboard expansion; narrow-window fit and reading-pane containment at 150%
+  zoom. This is a bounded fixture check, not a general performance benchmark.
+- Native HTML composition, visible attachment, native signature, save/reopen
+  of a local draft with its attachment, quoted reply, forward as attachment and
+  draft persistence after application restart. No outgoing server is configured.
+- Sender-photo decoding, repeated extension reload, cold application restart,
+  disable/enable cleanup and absence of dead-document teardown errors.
+- Forced-colour focus declarations were activated directly through CSSOM and
+  checked for one visible border. Headless Linux did not expose an active OS
+  forced-colour theme, so this does not certify an actual OS high-contrast session.
 
-The initials regression check was also run against a separate deliberately
-broken package with empty initials. It failed at the expected assertion. The
-unchanged, passing package is the one committed here.
+The timeout test was run against a separate deliberately broken package whose
+load timeout marked the browser ready instead of showing an error. It failed
+at the stalled-message regression assertion. The unchanged source was then run
+successfully again. No user profile was used in these tests.
 
-The UI runner uses a temporary local-only profile and sample addresses under
-`example.test`. Sending mail, opening attachments, and saving to the filesystem
-through Thunderbird's attachment UI were not exercised. Actual send/receive
-behaviour across providers is not certified by these local checks.
+## Limits
 
-Upstream `mach commlint`, mochitests and the full Thunderbird/Firefox build were
-not run: this standalone package was checked with the installed application,
-without a parent Firefox build checkout.
+Live provider authentication, send/receive, encrypted messages, actual attachment
+opening/saving, assistive-technology output, Windows/macOS and other Thunderbird
+major versions were not certified. No live messages, tracking events or test
+emails were sent. The loopback image check uses a local HTTP server only.
 
-Sender-photo checks passed with a local PNG fixture in collapsed conversation cards and expanded headers (including decoded image dimensions). The suite also passed a graceful quit and cold application restart. Account photos and email mappings remain private profile data.
+Upstream `mach commlint`, mochitests, leak instrumentation and full Thunderbird /
+Firefox compilation were not run: this standalone package was tested using the
+installed application without a parent Firefox build checkout. GitHub Actions
+runs package/installer checks; it does not claim real Thunderbird UI coverage.

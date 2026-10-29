@@ -1,0 +1,32 @@
+name: Outlook Bird package checks
+on:
+  push:
+    paths: ['mocky/outlook-bird/**', '.github/workflows/outlook-bird.yml']
+  pull_request:
+    paths: ['mocky/outlook-bird/**', '.github/workflows/outlook-bird.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: mocky/outlook-bird
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Test installer, rollback and reproducible builds
+        run: python3 -m unittest discover -s mocky/outlook-bird/tests -p 'test_*.py'
+      - name: Build and syntax-check the packaged extension
+        run: |
+          python3 mocky/outlook-bird/manage.py build
+          python3 -c "import zipfile; zipfile.ZipFile('mocky/outlook-bird/outlook-bird.xpi').extract('experiment/api.js', '/tmp/outlook-bird-check')"
+          node --check /tmp/outlook-bird-check/experiment/api.js
+      - name: Build installer archive
+        run: python3 mocky/outlook-bird/manage.py release
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: outlook-bird-installer
+          path: mocky/outlook-bird/dist/*.zip*
