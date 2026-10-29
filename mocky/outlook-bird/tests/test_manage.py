@@ -141,6 +141,7 @@ class ProfileLifecycle(unittest.TestCase):
         manage.release()
         package = next((self.root/'dist').glob('*.zip'))
         with zipfile.ZipFile(package) as archive:
+            self.assertIn('tests/smoke.py', archive.namelist())
             sums = archive.read('SHA256SUMS').decode().splitlines()
             self.assertEqual(len(sums), len(archive.namelist())-1)
             for entry in sums:

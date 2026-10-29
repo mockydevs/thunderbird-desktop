@@ -209,7 +209,7 @@ def release():
     destination = ROOT/'dist'/f'outlook-bird-{version}.zip'
     destination.parent.mkdir(exist_ok=True)
     sources = [ROOT/name for name in ['manage.py', 'README.md', 'LICENSE', 'outlook-bird.xpi', 'CHANGELOG.md', 'VERIFICATION.md', 'ASSET-NOTES.txt', 'preview.png']]
-    for directory in ['addon', 'chrome']:
+    for directory in ['addon', 'chrome', 'tests']:
         sources.extend(p for p in (ROOT/directory).rglob('*') if p.is_file() and '__pycache__' not in p.parts)
     checksums = []
     with zipfile.ZipFile(destination, 'w', zipfile.ZIP_DEFLATED) as archive:
