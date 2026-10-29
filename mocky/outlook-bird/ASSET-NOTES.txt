@@ -1,0 +1,13 @@
+Asset: chrome/alpine-lake.png
+Created with the built-in image generation tool for this layout.
+
+Prompt:
+Create a high-resolution landscape wallpaper for a desktop email app, wide 16:9
+composition. A serene alpine lake with glassy turquoise-blue water reflecting a
+dark evergreen forest, tall sharp snow-covered mountain peaks rising near the
+middle-right of the frame, soft pale blue overcast sky and wisps of mist around
+the mountain slopes, subtle warm early morning sunlight on the left face of the
+tallest peak. Photorealistic natural landscape photography, cool airy blue
+palette, quiet and spacious. Lake occupies lower 45 percent, mountains middle,
+sky top. No text, logos, UI, people or buildings. This is an original background
+inspired by a calm Outlook mountain lake theme, not a screenshot.

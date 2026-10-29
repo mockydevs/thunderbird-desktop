@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "name": "__MSG_extensionName__",
+  "version": "0.2.0",
+  "description": "__MSG_extensionDescription__",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "outlook-bird@mocky.local",
+      "strict_min_version": "159.0",
+      "strict_max_version": "*"
+    }
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "experiment_apis": {
+    "outlookBird": {
+      "schema": "experiment/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["outlookBird"]],
+        "script": "experiment/api.js"
+      }
+    }
+  },
+  "default_locale": "en"
+}

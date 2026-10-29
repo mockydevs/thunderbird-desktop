@@ -1,0 +1,144 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/. */
+
+:host {
+  display: block;
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  scrollbar-gutter: stable;
+  padding-inline-end: 10px;
+  background: transparent;
+  color: #242424;
+  font:
+    13px "Segoe UI",
+    "Noto Sans",
+    sans-serif;
+}
+header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 14px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border: 0;
+  border-radius: 7px;
+  color: #242424;
+  background: #eaf3f9;
+}
+header .info {
+  order: 2;
+}
+header .counts {
+  flex-direction: row;
+  gap: 8px;
+  font-size: 11px;
+  color: #605e5c;
+}
+header .title {
+  order: 0;
+  flex: 1 0 100%;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0;
+}
+header .toolbar,
+header .actions {
+  display: none;
+}
+.ob-message-loading {
+  padding: 20px 30px;
+  color: #605e5c;
+  font-size: 13px;
+}
+.ob-message-loading[hidden] {
+  display: none;
+}
+#mainConversation {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: auto;
+  padding-bottom: 12px;
+}
+#mainConversation article {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px 12px;
+  min-height: 76px;
+  padding: 15px 18px 15px 66px;
+  box-sizing: border-box;
+  border: 1px solid #d5e0e8;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 2px #253b5315;
+}
+#mainConversation article + article {
+  border-block-start: 1px solid #d5e0e8;
+}
+#mainConversation article[aria-expanded="false"]:hover {
+  background: #f6f9fc;
+}
+#mainConversation article[aria-expanded="false"]:focus-visible {
+  outline: none;
+  border-color: #0f6cbd;
+}
+#mainConversation article[data-ob-initials]::before {
+  content: attr(data-ob-initials);
+  position: absolute;
+  top: 15px;
+  left: 16px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ob-avatar-bg, #cce7d0);
+  color: #224537;
+  font-size: 13px;
+}
+#mainConversation article address {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: normal;
+}
+#mainConversation article time {
+  font-size: 11px;
+  color: #605e5c;
+}
+#mainConversation article p {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: #605e5c;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+#mainConversation article[aria-expanded="true"] {
+  display: block;
+  padding: 0;
+  min-height: 440px;
+  overflow: hidden;
+}
+#mainConversation article[aria-expanded="true"] browser {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  min-block-size: inherit;
+}
+@media (forced-colors: active) {
+  #mainConversation article[aria-expanded="false"]:focus-visible {
+    border-color: Highlight;
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "extensionName": {
+    "message": "Outlook Bird \u2014 Local Layout"
+  },
+  "extensionDescription": {
+    "message": "Outlook-inspired layout, conversation cards, sender initials and native mail controls."
+  },
+  "newMail": {
+    "message": "New mail"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "archive": {
+    "message": "Archive"
+  },
+  "reply": {
+    "message": "Reply"
+  },
+  "replyAll": {
+    "message": "Reply all"
+  },
+  "forward": {
+    "message": "Forward"
+  },
+  "readUnread": {
+    "message": "Read / Unread"
+  },
+  "print": {
+    "message": "Print"
+  },
+  "mailActions": {
+    "message": "Mail actions"
+  },
+  "mail": {
+    "message": "Mail"
+  },
+  "folders": {
+    "message": "Folders"
+  },
+  "readStatus": {
+    "message": "Message read status"
+  },
+  "all": {
+    "message": "All"
+  },
+  "unread": {
+    "message": "Unread"
+  },
+  "searchMail": {
+    "message": "Search mail"
+  },
+  "collapseMessage": {
+    "message": "Collapse message"
+  },
+  "attachmentActions": {
+    "message": "Attachment actions"
+  },
+  "loadingMessage": {
+    "message": "Loading message\u2026"
+  }
+}

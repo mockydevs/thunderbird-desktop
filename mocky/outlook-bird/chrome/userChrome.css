@@ -1,0 +1,781 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/. */
+
+@import url("reading-pane.css");
+
+/* Outlook Bird — local Thunderbird appearance, no message-content overrides. */
+@-moz-document url("chrome://messenger/content/messenger.xhtml"), url("about:3pane"), url("about:message"), url("chrome://messenger/content/multimessageview.xhtml")
+{
+  :root {
+    color-scheme: light !important;
+    --ob-blue: #0f6cbd !important;
+    --ob-text: #242424 !important;
+    --ob-border: #dce3e8 !important;
+    --primary: #0f6cbd !important;
+    --primary-hover: #115ea3 !important;
+    --primary-active: #0c3b5e !important;
+    --selected-item-color: #0f6cbd !important;
+    --selected-item-background: #cfe4fa !important;
+    --listbox-focused-selected-bg: #cfe4fa !important;
+    --listbox-selected-bg: #e8f1fa !important;
+    --listbox-selected-color: #242424 !important;
+    --listbox-focused-selected-color: #242424 !important;
+    --focus-outline-color: #0f6cbd !important;
+    font-family: "Segoe UI", "Noto Sans", sans-serif !important;
+    font-size: 13px !important;
+  }
+  button:focus-visible,
+  input:focus-visible,
+  [role="searchbox"]:focus-visible {
+    outline: none !important;
+    border: 1px solid #0f6cbd !important;
+    box-shadow: none !important;
+  }
+  @media (forced-colors: active) {
+    button:focus-visible,
+    input:focus-visible,
+    [role="searchbox"]:focus-visible {
+      outline: 2px solid Highlight !important;
+      outline-offset: -2px !important;
+      border-color: transparent !important;
+    }
+  }
+}
+
+@-moz-document url("chrome://messenger/content/messenger.xhtml")
+{
+  #messengerWindow,
+  #messengerBody,
+  #navigation-toolbox {
+    background: #e6f1f7 !important;
+    color: #242424 !important;
+  }
+  unified-toolbar,
+  #unifiedToolbarContainer {
+    background: linear-gradient(
+      100deg,
+      #f0f7fb,
+      #d8eaf4 65%,
+      #c3dcea
+    ) !important;
+    box-shadow: none !important;
+  }
+  #unifiedToolbar {
+    min-height: 50px !important;
+  }
+  #unifiedToolbarContent {
+    gap: 10px !important;
+  }
+  #unifiedToolbarContent .spacer {
+    display: none !important;
+  }
+  #unifiedToolbarContent > [item-id="search-bar"] {
+    margin-inline-start: 292px !important;
+    flex: 0 1 430px !important;
+    min-width: 180px !important;
+  }
+  global-search-bar {
+    border-radius: 4px !important;
+    background: white !important;
+  }
+  .kbd-container[data-ob-placeholder] kbd {
+    display: none !important;
+  }
+  #tabs-toolbar {
+    background: #e5eff5 !important;
+    padding-top: 3px !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  .tab-background {
+    border-radius: 5px 5px 0 0 !important;
+  }
+  .tab-background[selected="true"] {
+    background: #f5f9fc !important;
+  }
+  .tab-line {
+    background: #0f6cbd !important;
+    height: 2px !important;
+  }
+  #spacesToolbar {
+    background: #f2f8fc !important;
+    border-inline-end: 1px solid #e0ebf2 !important;
+    padding-top: 8px !important;
+  }
+  #spacesToolbar .spaces-toolbar-button {
+    color: #0f6cbd !important;
+    fill: #0f6cbd !important;
+    border-radius: 6px !important;
+    margin-block: 4px !important;
+  }
+  #spacesToolbar .spaces-toolbar-button.current {
+    background: #d6eafa !important;
+  }
+  #status-bar {
+    background: #edf5fa !important;
+    border-top: 0 !important;
+  }
+  #ob-ribbon {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 3px !important;
+    margin: 6px 14px 10px 52px !important;
+    padding: 5px !important;
+    min-height: 42px !important;
+    box-sizing: border-box !important;
+    color: #242424 !important;
+    background: #fff !important;
+    border: 1px solid #d8e3eb !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 2px #243b5312 !important;
+  }
+  #ob-ribbon toolbarbutton {
+    appearance: none !important;
+    color: #333 !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    padding: 6px 10px !important;
+    margin: 0 !important;
+    min-height: 32px !important;
+    font: inherit !important;
+  }
+  #ob-ribbon toolbarbutton:hover {
+    background: #edf3f8;
+  }
+  #ob-ribbon toolbarbutton:focus-visible {
+    outline: none !important;
+    border-color: #0f6cbd !important;
+    box-shadow: none !important;
+  }
+  #ob-ribbon toolbarbutton[disabled="true"] {
+    opacity: 0.42;
+  }
+  #ob-ribbon .toolbarbutton-icon {
+    width: 16px;
+    height: 16px;
+    margin-inline-end: 7px;
+  }
+  #ob-ribbon .toolbarbutton-text {
+    margin: 0;
+    padding: 0;
+  }
+  #ob-ribbon .ob-new {
+    color: #fff !important;
+    background: #0f6cbd !important;
+    padding-inline: 14px !important;
+    margin-inline-end: 7px !important;
+  }
+  #ob-ribbon .ob-new:hover {
+    background: #115ea3;
+  }
+  #ob-ribbon .ob-separator {
+    width: 1px;
+    height: 23px;
+    margin-inline: 5px;
+    background: #e5e7eb;
+  }
+  @media (max-width: 1050px) {
+    #unifiedToolbarContent > [item-id="search-bar"] {
+      margin-inline-start: 12px !important;
+    }
+    #ob-ribbon {
+      margin-inline: 50px 6px !important;
+    }
+    #ob-ribbon toolbarbutton {
+      padding-inline: 6px;
+    }
+  }
+}
+
+@-moz-document url("about:3pane") {
+  :root {
+    --tree-view-bg: #fff !important;
+    --tree-view-color: #242424 !important;
+    --layout-background-0: #f7fafc !important;
+    --layout-background-1: #fff !important;
+    --layout-background-2: #f0f6fa !important;
+    --tree-card-row-gap: 0px !important;
+    --tree-card-inline: 0px !important;
+  }
+  #paneLayout {
+    background: #dfedf5 url("alpine-lake.png") center center / cover no-repeat !important;
+    --thread-pane-container-gap: 0px !important;
+  }
+  #folderPane {
+    background: linear-gradient(
+      160deg,
+      #f4f9fcf7 20%,
+      #e5f1f7f0 70%,
+      #d0e9f3eb
+    ) !important;
+    color: #242424 !important;
+    padding-inline: 8px !important;
+    box-sizing: border-box !important;
+  }
+  #folderPaneHeaderBar {
+    background: transparent !important;
+    border: 0 !important;
+    min-height: 48px !important;
+  }
+  #folderPaneWriteMessage {
+    background: #0f6cbd !important;
+    color: white !important;
+    border-color: transparent !important;
+  }
+  :root[data-ob-ribbon] #folderPaneWriteMessage {
+    display: none !important;
+  }
+  #folderTree {
+    padding-block: 5px !important;
+  }
+  #folderTree li > .container {
+    min-height: 36px !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    padding-inline: 8px !important;
+    gap: 9px !important;
+    color: #323130 !important;
+  }
+  #folderTree li > .container > .name {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+  }
+  #folderTree li[data-server-type] > .container > .name {
+    font-weight: 650 !important;
+  }
+  #folderTree li[data-server-type] {
+    margin-top: 10px !important;
+  }
+  #folderTree li > .container:hover {
+    background: #e3edf4 !important;
+  }
+  #folderTree li.selected > .container {
+    background: #dfe5e9 !important;
+    border-color: transparent !important;
+  }
+  #folderTree:focus-visible li.selected > .container {
+    border-color: #0f6cbd !important;
+  }
+  #folderTree .folder-count-badge {
+    background: transparent !important;
+    color: #0f6cbd !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+  }
+  #folderTree .icon {
+    filter: grayscale(1) !important;
+    opacity: 0.8;
+  }
+  #folderPaneSplitter,
+  #messagePaneSplitter {
+    background: #d9e6ef !important;
+    border: 0 !important;
+  }
+  #threadPane {
+    background: white !important;
+    border: 1px solid #d8e2e9 !important;
+    border-radius: 7px 7px 0 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+  #threadPaneHeaderBar {
+    min-height: 44px !important;
+    background: #fff !important;
+    border-bottom: 1px solid #dfe3e7 !important;
+    padding-inline: 14px !important;
+  }
+  #threadPaneFolderName {
+    font-size: 14px !important;
+    font-weight: 650 !important;
+    color: #242424 !important;
+  }
+  #threadPaneFolderCountContainer {
+    display: none !important;
+  }
+  #threadPaneQuickFilterButton {
+    font-size: 0 !important;
+    padding: 6px !important;
+    min-width: 28px !important;
+  }
+  #threadPaneQuickFilterButton span {
+    display: none !important;
+  }
+  #quickFilterBar {
+    background: #f4f8fb !important;
+    border-bottom: 1px solid #dce3e8 !important;
+  }
+  #threadTree {
+    background: #fff !important;
+    padding: 0 !important;
+  }
+  #threadTree .card-layout > td {
+    padding: 0 !important;
+  }
+  #threadTree .card-layout .card-container {
+    position: relative !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 10px 12px 9px 56px !important;
+    background: #fff !important;
+    color: #242424 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e4e7eb !important;
+    border-inline-start: 3px solid transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  #threadTree .card-layout .read-status-column {
+    display: none !important;
+  }
+  #threadTree .card-layout .thread-card-column {
+    min-width: 0 !important;
+    gap: 4px !important;
+  }
+  #threadTree .card-layout:hover .card-container {
+    background: #f3f7fb !important;
+  }
+  #threadTree .card-layout.selected .card-container {
+    background: #cfe4fa !important;
+    border-inline-start-color: #0f6cbd !important;
+  }
+  #threadTree .card-layout[data-properties~="unread"] .card-container {
+    border-inline-start-color: #0f6cbd !important;
+  }
+  #threadTree:focus-visible .card-layout.current .card-container {
+    border-color: #0f6cbd !important;
+  }
+  #threadTree .card-container[data-ob-initials]::before {
+    content: attr(data-ob-initials) !important;
+    position: absolute !important;
+    inset-inline-start: 12px !important;
+    top: 13px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 50% !important;
+    background: var(--ob-avatar-bg, #cce7d0) !important;
+    color: #224537 !important;
+    font-size: 13px !important;
+    font-weight: 550 !important;
+  }
+  #threadTree .sender {
+    font-size: 13px !important;
+    color: #323130 !important;
+    font-weight: 450 !important;
+  }
+  #threadTree .date {
+    color: #605e5c !important;
+    font-size: 11px !important;
+  }
+  #threadTree .subject {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: #323130 !important;
+  }
+  #threadTree .card-layout[data-properties~="unread"] .sender {
+    font-weight: 650 !important;
+  }
+  #threadTree .card-layout[data-properties~="unread"] .subject {
+    font-weight: 600 !important;
+    color: #0f6cbd !important;
+  }
+  #threadTree .thread-card-row {
+    gap: 6px !important;
+  }
+  #threadTree .thread-card-dynamic-row {
+    row-gap: 3px !important;
+  }
+  #threadTree .tree-button-more {
+    opacity: 0;
+  }
+  #threadTree .card-layout:hover .tree-button-more,
+  #threadTree .card-layout:focus-within .tree-button-more {
+    opacity: 1;
+  }
+  #threadTree .card-layout[data-properties~="dummy"] .card-container {
+    padding: 6px 14px !important;
+    background: #f4f5f6 !important;
+  }
+  #messagePane {
+    background: transparent !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box !important;
+  }
+  #messagePane browser {
+    background: transparent !important;
+    border-radius: 7px !important;
+  }
+  @media (max-width: 1150px) {
+    #folderTree li > .container {
+      padding-inline: 3px !important;
+    }
+    #folderPane {
+      padding-inline: 3px !important;
+    }
+    #threadTree .card-layout .card-container {
+      padding-inline-end: 8px !important;
+    }
+  }
+}
+
+@-moz-document url("about:message"), url("chrome://messenger/content/multimessageview.xhtml")
+{
+  :root {
+    background: #edf4f8 !important;
+    color: #242424 !important;
+  }
+  #messageHeader {
+    background: #fff !important;
+    color: #242424 !important;
+    border-bottom: 1px solid #e4e9ed !important;
+    padding: 15px 20px !important;
+  }
+  #expandedsubjectBox {
+    font-size: 19px !important;
+    font-weight: 550 !important;
+  }
+  .recipient-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+  }
+}
+
+@-moz-document url("chrome://messenger/content/messenger.xhtml")
+{
+  #unifiedToolbar {
+    position: relative !important;
+  }
+  #ob-brand {
+    position: absolute !important;
+    inset-inline-start: 22px !important;
+    top: 14px !important;
+    font-size: 15px !important;
+    font-weight: 650 !important;
+    color: #303c47 !important;
+  }
+  #ob-ribbon toolbarbutton {
+    -moz-context-properties: fill, stroke !important;
+    fill: currentColor !important;
+    stroke: currentColor !important;
+  }
+  #ob-ribbon .ob-new {
+    color: white !important;
+    background: #0f6cbd !important;
+  }
+  #ob-ribbon .ob-new:hover {
+    background: #115ea3 !important;
+  }
+  #ob-ribbon toolbarbutton[data-ob-command^="cmd_reply"] {
+    fill: #9b3ab9 !important;
+    stroke: #9b3ab9 !important;
+  }
+  #ob-ribbon toolbarbutton[data-ob-command="cmd_forward"] {
+    fill: #0f6cbd !important;
+    stroke: #0f6cbd !important;
+  }
+  #ob-ribbon toolbarbutton[data-ob-command="cmd_archive"] {
+    fill: #498205 !important;
+    stroke: #498205 !important;
+  }
+}
+@-moz-document url("about:3pane") {
+  #ob-folder-heading {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    flex: 1 !important;
+    margin-inline: 8px !important;
+  }
+  #folderPaneHeaderBar {
+    gap: 4px !important;
+  }
+  #folderPaneGetMessages {
+    order: 2 !important;
+  }
+  #folderPaneOptionsButton {
+    order: 3 !important;
+  }
+}
+
+@-moz-document url("chrome://messenger/content/messenger.xhtml")
+{
+  #ob-ribbon toolbarbutton {
+    fill: transparent !important;
+  }
+  #ob-ribbon toolbarbutton[data-ob-command^="cmd_reply"] {
+    fill: transparent !important;
+  }
+  #ob-ribbon toolbarbutton[data-ob-command="cmd_forward"],
+  #ob-ribbon toolbarbutton[data-ob-command="cmd_archive"] {
+    fill: transparent !important;
+  }
+  #spacesToolbar .spaces-toolbar-button {
+    fill: transparent !important;
+    stroke: #0f6cbd !important;
+  }
+}
+@-moz-document url("about:3pane") {
+  #threadTree .card-layout .card-container {
+    padding-block: 6px !important;
+  }
+  #threadTree .card-layout .thread-card-row {
+    line-height: 18px !important;
+  }
+  #threadTree .card-layout .thread-card-dynamic-row {
+    grid-template: "subject subject subject" 18px "button preview info" 24px / auto minmax(
+        0,
+        1fr
+      ) auto !important;
+    column-gap: 5px !important;
+    row-gap: 2px !important;
+  }
+  #threadTree .card-layout .thread-card-icon-info {
+    position: static !important;
+    grid-area: info !important;
+    gap: 4px !important;
+    align-items: center !important;
+    margin-inline-start: auto !important;
+  }
+  #threadTree .card-layout .tree-button-more {
+    display: none !important;
+  }
+  #threadTree .card-layout .ob-preview {
+    grid-area: preview !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    font-size: 12px !important;
+    color: #605e5c !important;
+    min-width: 0 !important;
+    line-height: 18px !important;
+  }
+  #threadTree .card-layout .thread-card-button {
+    font-size: 10px !important;
+    padding: 0 3px !important;
+    min-height: 17px !important;
+    border-color: transparent !important;
+    background: #f0f4f7 !important;
+  }
+  #threadTree .card-layout .thread-card-button::before {
+    display: none !important;
+  }
+  #threadTree .card-layout .date {
+    max-width: 58px !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    margin-inline-end: 0 !important;
+  }
+  #messagePane > conversation-view {
+    display: block !important;
+    height: 100% !important;
+    overflow: auto !important;
+    background: transparent !important;
+  }
+  #messagePane > conversation-view[hidden] {
+    display: none !important;
+  }
+}
+
+@-moz-document url("about:message") {
+  #messageHeader .message-header-view-button {
+    appearance: none !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    padding: 5px 7px !important;
+    background: transparent !important;
+    color: #424242 !important;
+  }
+  #messageHeader .message-header-view-button:hover {
+    background: #edf3f8 !important;
+  }
+  #messageHeader .message-header-view-button:focus-visible {
+    outline: none !important;
+    border-color: #0f6cbd !important;
+  }
+  #messageHeader .toolbarbutton-icon {
+    fill: transparent !important;
+    stroke: currentColor !important;
+  }
+  #messageHeader .message-header-view-button {
+    font-size: 12px !important;
+  }
+}
+
+@-moz-document url("chrome://messenger/content/messenger.xhtml")
+{
+  .kbd-container[data-ob-placeholder] {
+    font-size: 0 !important;
+  }
+  .kbd-container[data-ob-placeholder]::before {
+    content: attr(data-ob-placeholder);
+    font-size: 13px !important;
+  }
+}
+@-moz-document url("about:3pane") {
+  #folderPaneMoreButton {
+    order: 2 !important;
+  }
+  #folderPaneGetMessages {
+    order: 1 !important;
+  }
+  #ob-folder-heading {
+    order: 0 !important;
+  }
+  #threadPaneHeaderBar .list-header-bar-container-start {
+    flex: 1 !important;
+    gap: 14px !important;
+    padding-block: 0 !important;
+  }
+  #ob-filter-tabs {
+    display: flex !important;
+    gap: 12px !important;
+    align-self: stretch !important;
+  }
+  #ob-filter-tabs button {
+    appearance: none !important;
+    font: inherit !important;
+    color: #605e5c !important;
+    border: 0 !important;
+    border-bottom: 2px solid transparent !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 12px 1px 10px !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+  }
+  #ob-filter-tabs button[aria-pressed="true"] {
+    color: #242424 !important;
+    font-weight: 600 !important;
+    border-bottom-color: #0f6cbd !important;
+  }
+  #ob-filter-tabs button:hover {
+    color: #0f6cbd !important;
+  }
+  #ob-filter-tabs button:focus-visible {
+    outline: none !important;
+    border: 0 !important;
+    border-bottom: 2px solid #0f6cbd !important;
+    background: #e5f0fa !important;
+  }
+  #folderTree::before {
+    display: none !important;
+  }
+  #threadTree .card-layout.current .card-container {
+    border-inline-start-color: #0f6cbd !important;
+  }
+}
+
+@-moz-document url("chrome://messenger/content/multimessageview.xhtml")
+{
+  body {
+    margin: 0 !important;
+    background: transparent !important;
+    color: #242424 !important;
+  }
+  #headingWrapper {
+    background: #eaf3f9 !important;
+    border: 0 !important;
+    border-radius: 7px !important;
+    padding: 14px 18px !important;
+    margin-block-end: 10px !important;
+  }
+  #heading {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+  }
+  #content {
+    padding: 0 !important;
+  }
+  #messageList {
+    display: grid !important;
+    gap: 10px !important;
+    list-style: none !important;
+    padding: 0 !important;
+  }
+  #messageList li {
+    background: #fff !important;
+    border: 1px solid #d5e0e8 !important;
+    border-radius: 8px !important;
+    padding: 16px 18px !important;
+  }
+  #messageList .item-header {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+  }
+  #messageList .snippet {
+    font-size: 12px !important;
+    color: #605e5c !important;
+  }
+  #footer {
+    font-size: 11px !important;
+    padding: 12px !important;
+    background: #eef5f9 !important;
+    border-radius: 5px !important;
+  }
+}
+
+@-moz-document url("about:3pane") {
+  #threadTree .card-layout .button-star {
+    inline-size: 24px !important;
+    block-size: 24px !important;
+    min-inline-size: 24px !important;
+    min-block-size: 24px !important;
+    background-size: 13px 13px !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    opacity: 0 !important;
+  }
+  #threadTree .card-layout:hover .button-star,
+  #threadTree .card-layout:focus-within .button-star,
+  #threadTree .card-layout[data-properties~="flagged"] .button-star {
+    opacity: 1 !important;
+  }
+  #threadTree .card-layout .attachment-icon {
+    inline-size: 13px !important;
+    block-size: 13px !important;
+    flex: 0 0 13px !important;
+  }
+  @media (hover: none) {
+    #threadTree .card-layout .button-star {
+      opacity: 1 !important;
+    }
+  }
+}
+@-moz-document url("about:message") {
+  #messagepane {
+    margin-inline: clamp(18px, 3vw, 40px) !important;
+    margin-block: 20px !important;
+    inline-size: auto !important;
+  }
+  #attachmentView {
+    background: #f8fafc !important;
+    border-block-start: 1px solid #dce3e8 !important;
+  }
+  #attachmentBar {
+    padding-inline: 18px !important;
+  }
+  #attachmentList {
+    padding-inline: 18px !important;
+  }
+}
+
+@-moz-document url("about:3pane") {
+  #messagePane {
+    padding-inline: 8px 0 !important;
+  }
+  #messagePane > conversation-view {
+    scrollbar-gutter: stable !important;
+    padding-inline-end: 10px !important;
+    box-sizing: border-box !important;
+  }
+}

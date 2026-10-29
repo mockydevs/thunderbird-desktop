@@ -1,0 +1,74 @@
+[
+  {
+    "namespace": "outlookBird",
+    "functions": [
+      {
+        "name": "start",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "labels",
+            "type": "object",
+            "properties": {
+              "newMail": {
+                "type": "string"
+              },
+              "delete": {
+                "type": "string"
+              },
+              "archive": {
+                "type": "string"
+              },
+              "reply": {
+                "type": "string"
+              },
+              "replyAll": {
+                "type": "string"
+              },
+              "forward": {
+                "type": "string"
+              },
+              "readUnread": {
+                "type": "string"
+              },
+              "print": {
+                "type": "string"
+              },
+              "mailActions": {
+                "type": "string"
+              },
+              "mail": {
+                "type": "string"
+              },
+              "folders": {
+                "type": "string"
+              },
+              "readStatus": {
+                "type": "string"
+              },
+              "all": {
+                "type": "string"
+              },
+              "unread": {
+                "type": "string"
+              },
+              "searchMail": {
+                "type": "string"
+              },
+              "collapseMessage": {
+                "type": "string"
+              },
+              "attachmentActions": {
+                "type": "string"
+              },
+              "loadingMessage": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

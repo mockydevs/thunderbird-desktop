@@ -1,0 +1,192 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/. */
+
+@-moz-document url("about:message") {
+  :root[data-ob-message] #attachment-splitter {
+    display: none !important;
+  }
+  :root[data-ob-message] #attachmentView:not([collapsed]) {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 0 0 auto !important;
+    block-size: auto !important;
+    max-block-size: 210px !important;
+    min-block-size: 0 !important;
+    margin-inline: clamp(18px, 3vw, 40px) !important;
+    margin-block: 4px 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: #fff !important;
+  }
+  :root[data-ob-message] #attachmentView[collapsed] {
+    display: none !important;
+  }
+  :root[data-ob-message] #attachmentList:not([collapsed]) {
+    order: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    flex: 0 1 auto !important;
+    gap: 10px !important;
+    padding: 8px 0 !important;
+    max-block-size: 156px !important;
+    overflow-y: auto !important;
+    background: #fff !important;
+  }
+  :root[data-ob-message] .attachmentItem {
+    display: grid !important;
+    grid-template: "icon name extension menu" 18px "icon size size menu" 14px / 22px minmax(
+        0,
+        1fr
+      ) max-content 24px !important;
+    gap: 0 3px !important;
+    box-sizing: border-box !important;
+    inline-size: 260px !important;
+    min-inline-size: 200px !important;
+    max-inline-size: 100% !important;
+    min-block-size: 50px !important;
+    padding: 8px 10px !important;
+    border: 1px solid #dfe5ea !important;
+    border-radius: 5px !important;
+    background: #fff !important;
+    color: #424242 !important;
+    font-size: 12px !important;
+    align-items: center !important;
+  }
+  :root[data-ob-message] .attachmentItem:hover {
+    background: #f5f9fd !important;
+    border-color: #a7c7e3 !important;
+  }
+  :root[data-ob-message] #attachmentList:focus .attachmentItem[selected] {
+    background: #edf5fc !important;
+    color: #242424 !important;
+    border-color: #0f6cbd !important;
+    outline: none !important;
+  }
+  :root[data-ob-message] .attachmentcell-icon {
+    grid-area: icon !important;
+    margin: 0 !important;
+    inline-size: 16px !important;
+    block-size: 16px !important;
+  }
+  :root[data-ob-message] .attachmentcell-name {
+    grid-area: name !important;
+    margin: 0 !important;
+    min-inline-size: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  :root[data-ob-message] .attachmentcell-extension {
+    grid-area: extension !important;
+    margin: 0 !important;
+  }
+  :root[data-ob-message] .attachmentcell-size {
+    grid-area: size !important;
+    margin: 0 !important;
+    font-size: 10px !important;
+    line-height: 14px !important;
+    color: #605e5c !important;
+    opacity: 1 !important;
+  }
+  :root[data-ob-message] .ob-attachment-menu {
+    grid-area: menu !important;
+    inline-size: 24px !important;
+    block-size: 28px !important;
+    border: 1px solid transparent !important;
+    border-radius: 3px !important;
+    padding: 0 !important;
+    background: transparent
+      url("chrome://messenger/skin/icons/new/compact/nav-down.svg") center /
+      12px 12px no-repeat !important;
+    -moz-context-properties: fill, stroke !important;
+    fill: transparent !important;
+    stroke: #605e5c !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+  :root[data-ob-message] .ob-attachment-menu:hover {
+    background-color: #e5f0fa !important;
+  }
+  :root[data-ob-message] .ob-attachment-menu:focus-visible {
+    border-color: #0f6cbd !important;
+    outline: none !important;
+  }
+  :root[data-ob-message] #attachmentBar {
+    order: 1 !important;
+    min-block-size: 28px !important;
+    padding: 0 !important;
+    font-size: 11px !important;
+    color: #605e5c !important;
+    background: transparent !important;
+    border: 0 !important;
+  }
+  :root[data-ob-message] #attachmentNameSep,
+  :root[data-ob-message] #attachmentName {
+    display: none !important;
+  }
+  :root[data-ob-message] #attachmentToggle {
+    display: none !important;
+  }
+  :root[data-ob-message] .ob-message-actions {
+    display: flex !important;
+    gap: 8px !important;
+    margin-inline: clamp(18px, 3vw, 40px) !important;
+    margin-block: 0 20px !important;
+  }
+  :root[data-ob-message] .ob-message-actions button {
+    appearance: none !important;
+    border: 1px solid #cbd8e3 !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    color: #0f6cbd !important;
+    font:
+      12px "Segoe UI",
+      "Noto Sans",
+      sans-serif !important;
+    padding: 6px 14px !important;
+  }
+  :root[data-ob-message] .ob-message-actions button:hover {
+    background: #eef5fb !important;
+  }
+  :root[data-ob-message] .ob-message-actions button:focus-visible {
+    border-color: #0f6cbd !important;
+    outline: none !important;
+  }
+  :root[data-ob-message] .ob-message-actions button:disabled {
+    opacity: 0.45 !important;
+  }
+}
+
+@-moz-document url("about:message") {
+  :root[data-ob-message] .attachmentItem {
+    grid-template: "icon name menu" 18px "icon size menu" 14px / 22px minmax(
+        0,
+        1fr
+      ) 24px !important;
+  }
+  :root[data-ob-message] .attachmentcell-extension {
+    display: none !important;
+  }
+  :root[data-ob-message] .attachmentcell-icon {
+    content: url("chrome://messenger/skin/icons/new/compact/file.svg") !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    -moz-context-properties: fill, stroke !important;
+    fill: transparent !important;
+    stroke: #b93838 !important;
+  }
+}
+
+@-moz-document url("about:message") {
+  :root[data-ob-message] .attachmentItem {
+    column-gap: 8px !important;
+  }
+  :root[data-ob-message] .ob-attachment-menu {
+    min-inline-size: 24px !important;
+    max-inline-size: 24px !important;
+    margin: 0 !important;
+    justify-self: end !important;
+  }
+}

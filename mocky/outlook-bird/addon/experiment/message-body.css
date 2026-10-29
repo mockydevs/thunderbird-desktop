@@ -1,0 +1,23 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/. */
+
+html {
+  min-block-size: 0 !important;
+}
+body {
+  margin: 0 !important;
+  min-block-size: 0 !important;
+  block-size: auto !important;
+  font-family: "Segoe UI", "Noto Sans", Arial, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+body :is(p, div, td, th, li, span, font, table, a) {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+body :is(pre, code, kbd, samp) {
+  font-family: monospace !important;
+  font-size: 13px !important;
+}
