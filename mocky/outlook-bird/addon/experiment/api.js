@@ -5,6 +5,21 @@
 /* Shadow-root styling for Thunderbird 159's native conversation component. */
 var OB_CONVERSATION_STYLE = "__OUTLOOK_BIRD_CONVERSATION_CSS__";
 
+// Profile-owned images remain private and never require a remote request.
+var OB_AVATARS = {};
+function avatarFor(sender) {
+  const address = sender.match(/<([^>]+)>/)?.[1] || sender.trim();
+  return OB_AVATARS[address.toLowerCase()] || "";
+}
+function paintPhoto(node, sender) {
+  const photo = avatarFor(sender);
+  node.style.setProperty(
+    "--ob-avatar-photo",
+    photo ? `url("${photo}")` : "none",
+  );
+  node.toggleAttribute("data-ob-photo", Boolean(photo));
+}
+
 /** Completes teardown even after a removed message document destroys its wrappers. */
 function cleanupUI(callback) {
   try {
@@ -18,13 +33,22 @@ var OB_READING_STYLE = "__OUTLOOK_BIRD_MESSAGE_BODY_CSS__";
 
 /** Sizes a native message browser and places its attachment controls above the body. */
 class MessageLayout {
-  constructor(browser, pane, view, labels, updateControls, collapse) {
+  constructor(
+    browser,
+    pane,
+    view,
+    labels,
+    updateControls,
+    collapse,
+    decoratePhotos,
+  ) {
     this.browser = browser;
     this.pane = pane;
     this.view = view;
     this.labels = labels;
     this.updateControls = updateControls;
     this.collapse = collapse;
+    this.decoratePhotos = decoratePhotos;
     this.cleanups = [];
     this.status = pane.document.createElement("div");
     this.status.classList.add("ob-message-loading");
@@ -53,6 +77,7 @@ class MessageLayout {
     if (this.destroyed || !this.browser.isConnected) return;
     const doc = this.browser.contentDocument;
     if (doc?.documentURI !== "about:message") return;
+    this.decoratePhotos(doc);
     const message = doc.getElementById("messagepane");
     if (!message) return;
     if (this.doc !== doc) {
@@ -288,6 +313,27 @@ var outlookBird = class extends ExtensionCommon.ExtensionAPI {
       outlookBird: {
         start: async (labels) => {
           this.labels = labels;
+          try {
+            const file = PathUtils.join(
+              Services.dirsvc.get("ProfD", Ci.nsIFile).path,
+              "chrome",
+              "avatars.json",
+            );
+            const images = await IOUtils.readJSON(file);
+            OB_AVATARS = Object.fromEntries(
+              Object.entries(images).filter(
+                ([email, uri]) =>
+                  email.includes("@") &&
+                  typeof uri === "string" &&
+                  uri.length < 2000000 &&
+                  /^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(uri),
+              ),
+            );
+          } catch (error) {
+            OB_AVATARS = {};
+            if (error.name !== "NotFoundError")
+              console.warn("Unable to read local avatar configuration");
+          }
           if (this.registered) return;
           this.registered = true;
           this.originalConversationPref = Services.prefs.getBoolPref(
@@ -541,6 +587,7 @@ var outlookBird = class extends ExtensionCommon.ExtensionAPI {
             "#f2c6c6",
           ];
           container.dataset.obInitials = initials;
+          paintPhoto(container, sender);
           container.style.setProperty(
             "--ob-avatar-bg",
             palette[(hash >>> 0) % palette.length],
@@ -658,6 +705,7 @@ var outlookBird = class extends ExtensionCommon.ExtensionAPI {
             const author = article.querySelector("address")?.textContent || "";
             const parts = author.match(/[\p{L}\p{N}]+/gu) || ["?"];
             article.dataset.obInitials = parts[0][0].toUpperCase();
+            paintPhoto(article, author);
             const header = view.messages?.find(
               (h) => h.messageId === article.dataset.messageId,
             );
@@ -702,6 +750,7 @@ var outlookBird = class extends ExtensionCommon.ExtensionAPI {
                 this.labels,
                 updateControls,
                 collapse,
+                decoratePhotos,
               );
               layouts.set(browser, layout);
               layout.render();
@@ -756,19 +805,88 @@ var outlookBird = class extends ExtensionCommon.ExtensionAPI {
       decorated.set(pane, cleanup);
       pane.addEventListener("unload", cleanup, { once: true });
     };
+    const photoDocs = new Map();
+    const decoratePhotos = (messageDoc) => {
+      if (
+        messageDoc?.documentURI !== "about:message" ||
+        photoDocs.has(messageDoc)
+      )
+        return;
+      const paint = () => {
+        const sender =
+          messageDoc.defaultView.gMessage?.mime2DecodedAuthor || "";
+        const photo = avatarFor(sender);
+        for (const avatar of messageDoc.querySelectorAll(
+          "#expandedfromBox .recipient-avatar",
+        )) {
+          let image = avatar.querySelector("img.ob-account-photo");
+          if (!photo) {
+            image?.remove();
+            continue;
+          }
+          if (!image) {
+            image = messageDoc.createElementNS(
+              "http://www.w3.org/1999/xhtml",
+              "img",
+            );
+            image.className = "ob-account-photo";
+            image.alt = "";
+            image.style.cssText =
+              "position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:white;border-radius:50%";
+            avatar.style.position = "relative";
+            avatar.append(image);
+          }
+          if (image.src !== photo) image.src = photo;
+        }
+      };
+      const observer = new win.MutationObserver(paint);
+      observer.observe(messageDoc.documentElement, {
+        childList: true,
+        subtree: true,
+      });
+      messageDoc.addEventListener("MsgLoaded", paint, true);
+      photoDocs.set(messageDoc, () => {
+        observer.disconnect();
+        messageDoc.removeEventListener("MsgLoaded", paint, true);
+        messageDoc
+          .querySelectorAll(".ob-account-photo")
+          .forEach((image) => image.remove());
+      });
+      messageDoc.defaultView.addEventListener(
+        "unload",
+        () => {
+          const cleanup = photoDocs.get(messageDoc);
+          photoDocs.delete(messageDoc);
+          if (cleanup) cleanupUI(cleanup);
+        },
+        { once: true },
+      );
+      paint();
+    };
     const onLoad = (event) => {
+      decoratePhotos(event.target);
       if (event.target?.documentURI === "about:3pane")
         decoratePane(event.target.defaultView);
     };
     doc.addEventListener("load", onLoad, true);
     cleanups.push(() => {
       doc.removeEventListener("load", onLoad, true);
+      for (const cleanup of photoDocs.values()) cleanupUI(cleanup);
       for (const cleanup of [...decorated.values()]) cleanupUI(cleanup);
     });
     const tabs = doc.getElementById("tabmail");
     for (const tab of tabs.tabInfo)
       decoratePane(tab.chromeBrowser?.contentWindow);
     decoratePane(tabs.currentAbout3Pane);
+    const scanPhotos = (document) => {
+      decoratePhotos(document);
+      for (const browser of document.querySelectorAll("browser")) {
+        try {
+          if (browser.contentDocument) scanPhotos(browser.contentDocument);
+        } catch {}
+      }
+    };
+    scanPhotos(doc);
   }
 
   detach(win) {

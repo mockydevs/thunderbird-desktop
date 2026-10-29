@@ -33,3 +33,5 @@ behaviour across providers is not certified by these local checks.
 Upstream `mach commlint`, mochitests and the full Thunderbird/Firefox build were
 not run: this standalone package was checked with the installed application,
 without a parent Firefox build checkout.
+
+Sender-photo checks passed with a local PNG fixture in collapsed conversation cards and expanded headers (including decoded image dimensions). The suite also passed a graceful quit and cold application restart. Account photos and email mappings remain private profile data.

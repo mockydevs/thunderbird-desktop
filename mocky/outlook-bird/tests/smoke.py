@@ -78,6 +78,8 @@ def make_profile(profile, port):
         f'user_pref({json.dumps(key)}, {json.dumps(value)});\n'
         for key, value in preferences.items()))
     shutil.copytree(ROOT/'chrome', profile/'chrome')
+    pixel = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aS1sAAAAASUVORK5CYII='
+    (profile/'chrome/avatars.json').write_text(json.dumps({f'preview{i}@example.test': pixel for i in range(4)}))
     box = mailbox.mbox(mail/'Inbox')
     bodies = [
         ('Emma Kamau', 'Hi, here is the updated proposal. Please review the typography and spacing.'),
@@ -155,6 +157,10 @@ await install.install();return install.error===0;
                 check(js(f"return {view}.shadowRoot.querySelectorAll('article').length===4;"), 'The thread shows all four conversation cards without a search index')
                 wait_for(lambda: js(f"return {view}.shadowRoot.querySelector('browser')?.contentDocument?.querySelector('#messagepane')?.contentDocument?.body?.textContent?.includes('ready for review');"))
                 check(True, 'The latest message body renders in its expanded card')
+                wait_for(lambda: js(f"return {view}.shadowRoot.querySelector('article[aria-expanded=\"false\"]').hasAttribute('data-ob-photo');"))
+                check(True, 'Configured sender photos decorate collapsed cards')
+                wait_for(lambda: js(f"return {view}.shadowRoot.querySelector('browser').contentDocument.querySelector('.ob-account-photo')?.naturalWidth>0;"))
+                check(True, 'Configured sender photos load in expanded message headers')
                 wait_for(lambda: js(f"const b={view}.shadowRoot.querySelector('browser');const m=b.contentDocument.getElementById('messagepane');return m.clientHeight>=m.contentDocument.body.scrollHeight-2;"))
                 check(True, 'The expanded message has no separate inner text scrollbar')
                 wait_for(lambda: js(f"const a={view}.shadowRoot.querySelector('article[aria-expanded=\"true\"]');const b=a.querySelector('browser');return a.getBoundingClientRect().height-b.getBoundingClientRect().height<8;"))
@@ -217,6 +223,24 @@ return true;
                     wait_for(lambda: js(f"const root={view}.shadowRoot;return [...root.querySelectorAll('article[aria-expanded=\"false\"]')].every(a=>a.dataset.obInitials)&&root.querySelectorAll('article[aria-expanded=\"false\"]').length===3;"))
                 check(True, 'Initials and controls survive repeated reloads without disappearing or duplicating')
                 check(js("return !Services.console.getMessageArray().some(e=>e instanceof Ci.nsIScriptError&&e.sourceName?.includes('outlook-bird')&&e.errorMessage?.includes('dead object'));"), 'Message-document cleanup produces no dead-document errors')
+                client.call('Marionette:Quit', {'flags':['eAttemptQuit']})
+                client.socket.close()
+                client = None
+                process.wait(timeout=15)
+                process = subprocess.Popen([
+                    args.thunderbird, '--headless', '--new-instance', '--offline',
+                    '--profile', str(profile), '--marionette',
+                ], env=environment, stdout=log, stderr=subprocess.STDOUT)
+                client = wait_for(Marionette)
+                wait_for(lambda: js("return !!document.getElementById('ob-ribbon')&&!!document.getElementById('tabmail').currentAbout3Pane;"))
+                js("const w=document.getElementById('tabmail').currentAbout3Pane;const {MailServices}=ChromeUtils.importESModule('resource:///modules/MailServices.sys.mjs');w.displayFolder(MailServices.accounts.localFoldersServer.rootFolder.getChildNamed('Inbox').URI);window.resizeTo(1680,1000);return true;")
+                wait_for(lambda: js("const w=document.getElementById('tabmail').currentAbout3Pane;return w.gDBView?.rowCount>=2;"))
+                js("const w=document.getElementById('tabmail').currentAbout3Pane;w.threadTree.selectedIndex=-1;for(let i=0;i<w.gDBView.rowCount;i++){if(w.gDBView.getMsgHdrAt(i).mime2DecodedSubject==='Website design review'){w.threadTree.selectedIndex=i;break;}}return true;")
+                wait_for(lambda: js(f"const v={view};return v?.messages?.length===4&&[...v.shadowRoot.querySelectorAll('article[aria-expanded=\"false\"]')].filter(a=>a.dataset.obInitials).length===3;"))
+                wait_for(lambda: js(f"return {view}.shadowRoot.querySelector('browser')?.contentDocument?.querySelector('#messagepane')?.contentDocument?.body?.textContent?.includes('ready for review');"))
+                check(True, 'Initials and message bodies render after quitting and relaunching the application')
+                wait_for(lambda: js(f"return {view}.shadowRoot.querySelector('browser').contentDocument.querySelector('.ob-account-photo')?.naturalWidth>0;"))
+                check(True, 'Configured sender photos survive a cold application restart')
                 if args.screenshot:
                     image = client.call('WebDriver:TakeScreenshot', {'full':False})
                     encoded = image['value'] if isinstance(image, dict) else image

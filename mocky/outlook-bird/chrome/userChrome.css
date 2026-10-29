@@ -529,10 +529,12 @@
     line-height: 18px !important;
   }
   #threadTree .card-layout .thread-card-dynamic-row {
-    grid-template: "subject subject subject" 18px "button preview info" 24px / auto minmax(
+    grid-template:
+      "subject subject subject" 18px "button preview info" 24px / auto minmax(
         0,
         1fr
-      ) auto !important;
+      )
+      auto !important;
     column-gap: 5px !important;
     row-gap: 2px !important;
   }
@@ -778,4 +780,9 @@
     padding-inline-end: 10px !important;
     box-sizing: border-box !important;
   }
+}
+
+#threadTree .card-container[data-ob-photo]::before {
+  content: "" !important;
+  background: white var(--ob-avatar-photo) center / contain no-repeat !important;
 }

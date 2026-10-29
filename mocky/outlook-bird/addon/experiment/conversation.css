@@ -142,3 +142,8 @@ header .actions {
     border-color: Highlight;
   }
 }
+
+#mainConversation article[data-ob-photo]::before {
+  content: "" !important;
+  background: white var(--ob-avatar-photo) center / contain no-repeat !important;
+}

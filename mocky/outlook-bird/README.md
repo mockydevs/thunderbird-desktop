@@ -102,3 +102,18 @@ Code is licensed under MPL-2.0; see [LICENSE](LICENSE). Thunderbird's existing
 icons and message components retain their upstream licences. The mountain-lake
 wallpaper is an original generated asset; its production prompt is recorded in
 [ASSET-NOTES.txt](ASSET-NOTES.txt).
+
+## Local sender photos
+
+Store an email-to-image mapping in `chrome/avatars.json` inside the Thunderbird
+profile. Each value must be a PNG or JPEG data URI, for example:
+
+```json
+{"sender@example.test": "data:image/png;base64,..."}
+```
+
+Use lowercase email addresses and base64-encoded image bytes (under 2 MB per
+entry). Restart Thunderbird after changing this file. Photos appear in message
+headers, conversation summaries and message-list cards; other senders keep their
+initials. This file belongs to the profile and must not be committed with account
+data. No Microsoft credentials or remote photo service are required.
