@@ -1,5 +1,10 @@
 # Changes
 
+## 0.3.2
+
+- Reduce folder-row height and account-group spacing while preserving text size,
+  unread counts, icons and keyboard focus.
+
 ## 0.3.1
 
 - Keep PR numbers and author names unbroken in PR/Author/What tables.

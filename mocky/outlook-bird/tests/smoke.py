@@ -166,6 +166,7 @@ await install.install();return install.error===0;
                 check(installed, 'The add-on installs in a clean profile')
                 wait_for(lambda: js("return !!document.getElementById('ob-ribbon')&&!!document.getElementById('tabmail').currentAbout3Pane.document.getElementById('ob-filter-tabs');"))
                 check(js("return getComputedStyle(document.getElementById('ob-ribbon')).display==='flex';"), 'The toolbar starts with its horizontal styling')
+                check(js("const w=document.getElementById('tabmail').currentAbout3Pane;const rows=[...w.document.querySelectorAll('#folderTree li > .container')].filter(r=>r.getBoundingClientRect().height);return rows.length>0&&rows.every(r=>r.getBoundingClientRect().height>=28&&r.getBoundingClientRect().height<=30);"), 'Compact folder rows retain a readable 28 to 30 pixel height')
                 js("const w=document.getElementById('tabmail').currentAbout3Pane;w.paneLayout.folderPaneSplitter.width=292;w.paneLayout.messagePaneSplitter.width=Math.max(400,w.innerWidth-652);w.threadTree.selectedIndex=0;return true;")
                 view = "document.getElementById('tabmail').currentAbout3Pane.document.querySelector('conversation-view')"
                 wait_for(lambda: js(f"return {view}?.messages?.length===4;"))

@@ -52,3 +52,10 @@ The full local UI suite passed with four additional assertions covering full PR
 identifiers and author names on one line, multiline descriptions, reading-pane
 containment and unchanged unrelated tables. The layout is restricted to simple
 three-column PR/Author/What (or Description) tables with no merged cells.
+
+## 0.3.2 folder density
+
+The local UI suite passed with a folder-row geometry assertion (28–30 px),
+including all prior table, reading, compose and restart checks. A deliberately
+spacious copy failed that new assertion; the unchanged source passed again.
+Folder text size and unread counts remain unchanged.

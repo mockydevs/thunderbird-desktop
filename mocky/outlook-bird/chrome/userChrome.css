@@ -220,7 +220,7 @@
   #folderPaneHeaderBar {
     background: transparent !important;
     border: 0 !important;
-    min-height: 48px !important;
+    min-height: 40px !important;
   }
   #folderPaneWriteMessage {
     background: #0f6cbd !important;
@@ -231,14 +231,16 @@
     display: none !important;
   }
   #folderTree {
-    padding-block: 5px !important;
+    padding-block: 3px !important;
   }
   #folderTree li > .container {
-    min-height: 36px !important;
+    min-block-size: 28px !important;
+    box-sizing: border-box !important;
     border: 1px solid transparent !important;
     border-radius: 4px !important;
+    padding-block: 3px !important;
     padding-inline: 8px !important;
-    gap: 9px !important;
+    gap: 7px !important;
     color: #323130 !important;
   }
   #folderTree li > .container > .name {
@@ -249,7 +251,7 @@
     font-weight: 650 !important;
   }
   #folderTree li[data-server-type] {
-    margin-top: 10px !important;
+    margin-block-start: 6px !important;
   }
   #folderTree li > .container:hover {
     background: #e3edf4 !important;
