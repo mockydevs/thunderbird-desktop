@@ -1,13 +1,13 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "__MSG_extensionDescription__",
   "browser_specific_settings": {
     "gecko": {
       "id": "outlook-bird@mocky.local",
       "strict_min_version": "159.0",
-      "strict_max_version": "*"
+      "strict_max_version": "159.*"
     }
   },
   "background": {

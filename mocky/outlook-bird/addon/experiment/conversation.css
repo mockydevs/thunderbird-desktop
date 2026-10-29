@@ -147,3 +147,28 @@ header .actions {
   content: "" !important;
   background: white var(--ob-avatar-photo) center / contain no-repeat !important;
 }
+
+.ob-message-loading:not([hidden]) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.ob-message-loading button {
+  border: 1px solid #cbd8e3;
+  border-radius: 4px;
+  padding-block: 6px;
+  padding-inline: 12px;
+  background: white;
+  color: #0f6cbd;
+}
+.ob-message-loading button:focus-visible {
+  border-color: #0f6cbd;
+  outline: none;
+}
+@media (forced-colors: active) {
+  .ob-message-loading button:focus-visible { border-color: Highlight; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :host { scroll-behavior: auto; }
+}

@@ -1,0 +1,58 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/. */
+
+/* Style native compose controls; keep recipient validation, signatures,
+ * draft saving and attachment handlers owned by Thunderbird. */
+@-moz-document url("chrome://messenger/content/messengercompose/messengercompose.xhtml")
+{
+  :root {
+    --ob-compose-accent: #0f6cbd;
+    --ob-compose-border: #cbd8e3;
+    --ob-compose-surface: #ffffff;
+    color-scheme: light;
+    background: #edf4f8;
+  }
+  #MsgHeadersToolbar {
+    padding-block: 12px;
+    padding-inline: clamp(12px, 3vw, 32px);
+    background: var(--ob-compose-surface);
+    border-block-end: 1px solid var(--ob-compose-border);
+  }
+  #msgSubject {
+    font-size: 15px !important;
+    padding-block: 7px;
+    padding-inline: 8px;
+    border: 1px solid var(--ob-compose-border);
+    border-radius: 4px;
+  }
+  #msgSubject:focus-visible {
+    border-color: var(--ob-compose-accent) !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  #attachmentArea {
+    background: var(--ob-compose-surface);
+    border-block-start: 1px solid var(--ob-compose-border);
+    padding-block: 8px;
+    padding-inline: 16px;
+  }
+  #attachmentBucket .attachmentItem {
+    margin-block: 4px;
+    margin-inline: 4px;
+    padding-block: 7px;
+    padding-inline: 10px;
+    border: 1px solid var(--ob-compose-border);
+    border-radius: 5px;
+  }
+  #attachmentBucket:focus .attachmentItem[selected] {
+    border-color: var(--ob-compose-accent) !important;
+    outline: none !important;
+  }
+  @media (forced-colors: active) {
+    #msgSubject:focus-visible,
+    #attachmentBucket:focus .attachmentItem[selected] {
+      border-color: Highlight !important;
+    }
+  }
+}

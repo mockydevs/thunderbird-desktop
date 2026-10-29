@@ -58,5 +58,14 @@
   },
   "loadingMessage": {
     "message": "Loading message\u2026"
+  },
+  "retryMessage": {
+    "message": "Try again"
+  },
+  "messageLoadError": {
+    "message": "This message could not be loaded. Check your connection and try again."
+  },
+  "emptyMessage": {
+    "message": "This message has no body text. Check its attachments for content."
   }
 }

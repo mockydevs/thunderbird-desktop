@@ -21,6 +21,9 @@ const keys = [
   "collapseMessage",
   "attachmentActions",
   "loadingMessage",
+  "retryMessage",
+  "messageLoadError",
+  "emptyMessage",
 ];
 const labels = Object.fromEntries(
   keys.map((key) => [key, messenger.i18n.getMessage(key)]),

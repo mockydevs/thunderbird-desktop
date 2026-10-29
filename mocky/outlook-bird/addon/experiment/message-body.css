@@ -21,3 +21,6 @@ body :is(pre, code, kbd, samp) {
   font-family: monospace !important;
   font-size: 13px !important;
 }
+body { overflow-wrap: anywhere !important; }
+body img { max-inline-size: 100%; block-size: auto; }
+body pre { white-space: pre-wrap; overflow-wrap: anywhere; }

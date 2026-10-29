@@ -64,6 +64,15 @@
               },
               "loadingMessage": {
                 "type": "string"
+              },
+              "retryMessage": {
+                "type": "string"
+              },
+              "messageLoadError": {
+                "type": "string"
+              },
+              "emptyMessage": {
+                "type": "string"
               }
             }
           }

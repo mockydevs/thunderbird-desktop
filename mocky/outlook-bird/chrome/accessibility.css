@@ -1,0 +1,58 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/. */
+
+@-moz-document url("chrome://messenger/content/messenger.xhtml"), url("about:3pane"), url("about:message")
+{
+  .ob-message-loading:not([hidden]) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-block: 12px;
+    padding-inline: 20px;
+    background: #f4f8fc;
+    color: #424242;
+    font-size: 13px;
+  }
+  .ob-message-loading[hidden] {
+    display: none !important;
+  }
+  .ob-message-loading button {
+    padding-block: 6px;
+    padding-inline: 12px;
+    border: 1px solid #cbd8e3;
+    border-radius: 4px;
+    background: white;
+    color: #0f6cbd;
+  }
+  .ob-message-loading button:focus-visible {
+    border-color: #0f6cbd;
+    outline: none;
+    box-shadow: none;
+  }
+  :root #ob-ribbon toolbarbutton:focus-visible,
+  :root #ob-filter-tabs button:focus-visible {
+    outline: none !important;
+    border: 1px solid #0f6cbd !important;
+    box-shadow: none !important;
+  }
+  @media (forced-colors: active) {
+    :root #ob-ribbon toolbarbutton:focus-visible,
+    :root #ob-filter-tabs button:focus-visible,
+    .ob-message-loading button:focus-visible,
+    :root[data-ob-message] .ob-attachment-menu:focus-visible,
+    :root[data-ob-message] .ob-message-actions button:focus-visible {
+      border-color: Highlight !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #ob-ribbon *,
+    #ob-filter-tabs *,
+    .ob-message-loading * {
+      transition: none !important;
+      animation: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

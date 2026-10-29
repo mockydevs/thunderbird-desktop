@@ -36,10 +36,12 @@
   }
   :root[data-ob-message] .attachmentItem {
     display: grid !important;
-    grid-template: "icon name extension menu" 18px "icon size size menu" 14px / 22px minmax(
+    grid-template:
+      "icon name extension menu" 18px "icon size size menu" 14px / 22px minmax(
         0,
         1fr
-      ) max-content 24px !important;
+      )
+      max-content 24px !important;
     gap: 0 3px !important;
     box-sizing: border-box !important;
     inline-size: 260px !important;
@@ -161,10 +163,9 @@
 
 @-moz-document url("about:message") {
   :root[data-ob-message] .attachmentItem {
-    grid-template: "icon name menu" 18px "icon size menu" 14px / 22px minmax(
-        0,
-        1fr
-      ) 24px !important;
+    grid-template:
+      "icon name menu" 18px "icon size menu" 14px / 22px minmax(0, 1fr)
+      24px !important;
   }
   :root[data-ob-message] .attachmentcell-extension {
     display: none !important;

@@ -16,6 +16,8 @@ import socket
 import subprocess
 import tempfile
 import threading
+import struct
+import zlib
 import time
 
 from client import Marionette
@@ -41,6 +43,19 @@ def check(value, message):
     if not value:
         raise AssertionError(message)
     print('PASS:', message, flush=True)
+
+
+def avatar_fixture():
+    """Return a small, recognisable PNG without external image dependencies."""
+    def chunk(kind, data):
+        return struct.pack('>I', len(data))+kind+data+struct.pack('>I', zlib.crc32(kind+data))
+    rows = bytearray()
+    for y in range(24):
+        rows.append(0)
+        for x in range(24):
+            mark = (7 <= x <= 9 and 6 <= y <= 18) or (9 <= x <= 15 and (6 <= y <= 8 or 11 <= y <= 13)) or (13 <= x <= 15 and 8 <= y <= 11)
+            rows.extend((255,255,255,255) if mark else (15,108,189,255))
+    return b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',24,24,8,6,0,0,0))+chunk(b'IDAT',zlib.compress(rows))+chunk(b'IEND',b'')
 
 
 def make_profile(profile, port):
@@ -78,7 +93,7 @@ def make_profile(profile, port):
         f'user_pref({json.dumps(key)}, {json.dumps(value)});\n'
         for key, value in preferences.items()))
     shutil.copytree(ROOT/'chrome', profile/'chrome')
-    pixel = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aS1sAAAAASUVORK5CYII='
+    pixel = 'data:image/png;base64,'+base64.b64encode(avatar_fixture()).decode()
     (profile/'chrome/avatars.json').write_text(json.dumps({f'preview{i}@example.test': pixel for i in range(4)}))
     box = mailbox.mbox(mail/'Inbox')
     bodies = [
@@ -215,6 +230,10 @@ return true;
                 js("const w=document.getElementById('tabmail').currentAbout3Pane;w.threadTree.selectedIndex=-1;for(let i=0;i<w.gDBView.rowCount;i++){if(w.gDBView.getMsgHdrAt(i).mime2DecodedSubject==='Website design review'){w.threadTree.selectedIndex=i;break;}}return true;")
                 wait_for(lambda: js(f"return {view}?.messages?.length===4&&!{view}.hidden;"))
                 wait_for(lambda: js(f"return {view}.shadowRoot.querySelector('browser')?.contentDocument?.querySelector('#messagepane')?.contentDocument?.body?.textContent?.includes('ready for review');"))
+                from reliability import run as reliability_checks
+                reliability_checks(js, wait_for, check, view)
+                js("const w=document.getElementById('tabmail').currentAbout3Pane;const h=[...w.gDBView.msgFolder.messages].find(h=>h.messageId==='design-0@example.test');w.document.querySelector('conversation-view').show(h);return true;")
+                wait_for(lambda: js(f"return {view}?.messages?.length===4;"))
                 icons = js("const w=document.getElementById('tabmail').currentAbout3Pane;const row=w.document.querySelector('.card-layout');const info=row.querySelector('.thread-card-icon-info');const subject=row.querySelector('.subject');return {below:info.getBoundingClientRect().top>=subject.getBoundingClientRect().bottom-1,size:w.getComputedStyle(row.querySelector('.button-star')).backgroundSize};")
                 check(icons['below'] and icons['size']=='13px 13px', 'Small star and attachment controls occupy a separate row below the subject')
                 for attempt in range(2):
@@ -223,6 +242,10 @@ return true;
                     wait_for(lambda: js(f"const root={view}.shadowRoot;return [...root.querySelectorAll('article[aria-expanded=\"false\"]')].every(a=>a.dataset.obInitials)&&root.querySelectorAll('article[aria-expanded=\"false\"]').length===3;"))
                 check(True, 'Initials and controls survive repeated reloads without disappearing or duplicating')
                 check(js("return !Services.console.getMessageArray().some(e=>e instanceof Ci.nsIScriptError&&e.sourceName?.includes('outlook-bird')&&e.errorMessage?.includes('dead object'));"), 'Message-document cleanup produces no dead-document errors')
+                from compose import run as compose_checks
+                fixture = Path(temporary)/'draft-notes.txt'
+                fixture.write_text('Local draft attachment fixture.')
+                compose_checks(js, wait_for, check, fixture)
                 client.call('Marionette:Quit', {'flags':['eAttemptQuit']})
                 client.socket.close()
                 client = None
@@ -241,12 +264,25 @@ return true;
                 check(True, 'Initials and message bodies render after quitting and relaunching the application')
                 wait_for(lambda: js(f"return {view}.shadowRoot.querySelector('browser').contentDocument.querySelector('.ob-account-photo')?.naturalWidth>0;"))
                 check(True, 'Configured sender photos survive a cold application restart')
+                js("return (async()=>{const {AddonManager}=ChromeUtils.importESModule('resource://gre/modules/AddonManager.sys.mjs');await (await AddonManager.getAddonByID('outlook-bird@mocky.local')).disable();return true;})();")
+                wait_for(lambda: js("return !document.getElementById('ob-ribbon');"))
+                check(js(f"return !{view}.shadowRoot.querySelector('browser').contentDocument.documentElement.dataset.obMessage&&!{view}.shadowRoot.querySelector('browser').contentDocument.getElementById('messagepane').contentDocument.querySelector('[data-ob-reading-style]');"), 'Disabling the extension removes injected reader styles and controls')
+                js("return (async()=>{const {AddonManager}=ChromeUtils.importESModule('resource://gre/modules/AddonManager.sys.mjs');await (await AddonManager.getAddonByID('outlook-bird@mocky.local')).enable();return true;})();")
+                wait_for(lambda: js(f"return !!document.getElementById('ob-ribbon')&&{view}.shadowRoot.querySelector('browser').dataset.obLoadState==='ready';"))
+                check(True, 'Re-enabling restores the layout without restarting')
+                check(js("return ChromeUtils.importESModule('resource:///modules/MailServices.sys.mjs').MailServices.accounts.localFoldersServer.rootFolder.getChildNamed('Drafts').getTotalMessages(false)===1;"), 'The local draft remains saved after restarting the application')
+                js("const w=document.getElementById('tabmail').currentAbout3Pane;w.paneLayout.folderPaneSplitter.width=292;w.paneLayout.messagePaneSplitter.width=Math.max(400,w.innerWidth-652);return true;")
                 if args.screenshot:
                     image = client.call('WebDriver:TakeScreenshot', {'full':False})
                     encoded = image['value'] if isinstance(image, dict) else image
                     args.screenshot.parent.mkdir(parents=True, exist_ok=True)
                     args.screenshot.write_bytes(base64.b64decode(encoded))
             finally:
+                if client:
+                    try:
+                        errors = js("return Services.console.getMessageArray().filter(e=>e instanceof Ci.nsIScriptError&&(/outlook-bird|moz-extension/.test(e.sourceName))).map(e=>e.errorMessage+' at '+e.sourceName+':'+e.lineNumber);")
+                        if errors: print('Extension diagnostics:', errors, flush=True)
+                    except Exception: pass
                 if client:
                     client.close()
                 if server:

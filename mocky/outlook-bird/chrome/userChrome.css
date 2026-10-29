@@ -3,6 +3,8 @@
  * file, you can obtain one at https://mozilla.org/MPL/2.0/. */
 
 @import url("reading-pane.css");
+@import url("compose.css");
+@import url("accessibility.css");
 
 /* Outlook Bird — local Thunderbird appearance, no message-content overrides. */
 @-moz-document url("chrome://messenger/content/messenger.xhtml"), url("about:3pane"), url("about:message"), url("chrome://messenger/content/multimessageview.xhtml")
@@ -36,9 +38,9 @@
     button:focus-visible,
     input:focus-visible,
     [role="searchbox"]:focus-visible {
-      outline: 2px solid Highlight !important;
-      outline-offset: -2px !important;
-      border-color: transparent !important;
+      outline: none !important;
+      border-color: Highlight !important;
+      box-shadow: none !important;
     }
   }
 }

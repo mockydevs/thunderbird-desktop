@@ -56,7 +56,7 @@ def build():
                 relative = source.relative_to(ROOT/'addon')
                 if relative.as_posix() == 'experiment/api.js':
                     text = source.read_text().replace(
-                        '"__OUTLOOK_BIRD_MESSAGE_LAYOUT__";',
+                        '/* __OUTLOOK_BIRD_MESSAGE_LAYOUT__ */',
                         (source.parent/'message-layout.js').read_text())
                     for token, name in [
                         ('__OUTLOOK_BIRD_CONVERSATION_CSS__', 'conversation.css'),
